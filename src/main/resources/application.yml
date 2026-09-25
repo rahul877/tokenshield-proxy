@@ -1,0 +1,50 @@
+server:
+  port: 8080
+  shutdown: graceful
+
+spring:
+  application:
+    name: tokenshield-proxy
+  threads:
+    virtual:
+      enabled: true
+
+  # Reactive Relational Database Configuration (PostgreSQL R2DBC)
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:tokenshield}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 30
+      max-idle-time: 30m
+
+  # Reactive Redis Configuration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      connect-timeout: 2000ms
+
+# Management and Observability Endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.tokenshield: DEBUG
+    org.springframework.r2dbc: INFO
+    org.springframework.data.redis: INFO
